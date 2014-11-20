@@ -41,10 +41,14 @@ var game = {
 	"loaded" : function () {
                 me.pool.register("mario", game.PlayerEntity, true);
                 
+                me.pool.register("levelTrigger", game.LevelTrigger);
+                
 		me.state.set(me.state.MENU, new game.TitleScreen());
 		me.state.set(me.state.PLAY, new game.PlayScreen());
 
 		// Start the game.
 		me.state.change(me.state.PLAY);
+                
+                
 	}
 };
