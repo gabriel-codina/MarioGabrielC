@@ -6,25 +6,31 @@ game.PlayerEntity = me.Entity.extend({
 
         this._super(me.Entity, 'init', [x, y, {
                 image: "mario",
-                spritewidth: 128,
-                spriteheight: 128,
-                width: 30,
+                spritewidth: "128",
+                spriteheight: "128",
+                width: 128,
                 height: 128,
                 getShape: function() {
-                    return(new me.Rect(0, 0, 25, 128)).toPolygon();
+                    return(new me.Rect(0, 0, 20, 128)).toPolygon();
                 }
             }]);
-
+//makes animations
+        this.renderable.addAnimation("bigIdle", [19]);
         this.renderable.addAnimation("idle", [3]);
+       
         this.renderable.addAnimation("smallWalk", [8, 9, 10, 11, 12, 13], 80);
         this.renderable.addAnimation("bigWalk", [14, 15, 16, 17, 18, 19], 80);
-        this.renderable.addAnimation("bigIdle", [19])
-
+        this.renderable.addAnimation("invinWalk", [39, 40, 41, 42, 43, 44], 80);
+        
+        
         this.renderable.setCurrentAnimation("idle");
 
         this.big = false;
+        this.invin = false;
         this.body.setVelocity(5, 20);
         me.game.viewport.follow(this.pos, me.game.viewport.AXIS.BOTH);
+        
+        
     },
     update: function(delta) {
 
@@ -32,6 +38,7 @@ game.PlayerEntity = me.Entity.extend({
         if (me.input.isKeyPressed("right")) {
 
             this.flipX(false);
+            //sets x position of mario bt adding th velocity set above in setVelocity()
             this.body.vel.x += this.body.accel.x * me.timer.tick;
         }
         else if (me.input.isKeyPressed("left")) {
@@ -82,7 +89,7 @@ game.PlayerEntity = me.Entity.extend({
         this.body.update(delta);
         me.collision.check(this, true, this.collideHandler.bind(this), true);
 
-        if (!this.big) {
+        if (!this.big && !this.invin) {
 
 
             if (this.body.vel.x !== 0) {
@@ -93,7 +100,7 @@ game.PlayerEntity = me.Entity.extend({
             }else {
                 this.renderable.setCurrentAnimation("idle");
             }
-        }else {
+        }else if(!this.invin){
            if (this.body.vel.x !== 0) {
                 if (!this.renderable.isCurrentAnimation("bigWalk")) {
                     this.renderable.setCurrentAnimation("bigWalk");
@@ -102,6 +109,15 @@ game.PlayerEntity = me.Entity.extend({
             }else {
                 this.renderable.setCurrentAnimation("bigIdle");
             } 
+        }else if(this.invin){
+           if (this.body.vel.x !== 0) {
+                if (!this.renderable.isCurrentAnimation("invinWalk")) {
+                    this.renderable.setCurrentAnimation("invinWalk");
+                    this.renderable.setAnimationFrame();
+                }
+            }else {
+                this.renderable.setCurrentAnimation("idle");
+            } 
         }
 
 
@@ -109,19 +125,26 @@ game.PlayerEntity = me.Entity.extend({
         return true;
     },
     collideHandler: function(response) {
+        var ygif = this.pos.y;
         var ydif = this.pos.y - response.b.pos.y;
         console.log(ydif);
+        
         if (response.b.type === 'badguy') {
             if (ydif <= -115) {
                 response.b.renderable.setCurrentAnimation("dead");
                 response.b.alive = false;
             } else {
-                me.state.change(me.state.MENU);
+                me.state.change(me.state.OVER);
             }
         } else if (response.b.type === 'mushroom') {
             this.big = true;
             me.game.world.removeChild(response.b);
+        } else if (response.b.type === 'star') {
+            this.invin = true;
+            me.game.world.removeChild(response.b);
         }
+        
+        
 
     }
 });
@@ -213,9 +236,29 @@ game.Mushroom = me.Entity.extend({
                     return(new me.Rect(0, 0, 67, 71)).toPolygon();
                 }
             }]);
-
+        
         me.collision.check(this);
         this.type = "mushroom";
 
     }
 });
+
+game.star = me.Entity.extend({
+    init: function(x, y, settings) {
+        this._super(me.Entity, 'init', [x, y, {
+                image: "star",
+                spritewidth: 64,
+                spriteheight: 64,
+                width: 64,
+                height: 64,
+                getShape: function() {
+                    return(new me.Rect(0, 0, 64, 64)).toPolygon();
+                }
+            }]);
+        
+        me.collision.check(this);
+        this.type = "star";
+
+    }
+});
+
