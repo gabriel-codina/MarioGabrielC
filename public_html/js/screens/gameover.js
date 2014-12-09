@@ -3,8 +3,10 @@ game.GameoverScreen = me.ScreenObject.extend({
 	 *  action to perform on state change
 	 */
 	onResetEvent: function() {
-            me.audio.pauseTrack("theme");
+            //pausing and playing song
+            me.audio.pause("theme");
             me.audio.play("death");
+            //same as title screen
 		me.game.world.addChild( new me.Sprite (0,0, me.loader.getImage('OVER-SCREEN')), -10);
                
                 me.input.bindKey(me.input.KEY.ENTER, "menu");

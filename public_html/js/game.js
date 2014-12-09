@@ -39,6 +39,7 @@ var game = {
 
 	// Run on game resources loaded.
 	"loaded" : function () {
+            //telling tiled what function to go to
                 me.pool.register("mario", game.PlayerEntity, true);
                 me.pool.register("BadGuy", game.BadGuy);
                 me.pool.register("BadFly", game.BadFly);
@@ -48,7 +49,7 @@ var game = {
                 me.pool.register("lever2", game.lever2);
                 me.pool.register("lever3", game.lever3);
                 me.pool.register("levelTrigger", game.LevelTrigger);
-                
+                //setting up states
 		me.state.set(me.state.MENU, new game.TitleScreen());
 		me.state.set(me.state.PLAY, new game.PlayScreen());
                 me.state.set(me.state.OVER, new game.GameoverScreen());

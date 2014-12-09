@@ -5,16 +5,17 @@ game.PlayScreen = me.ScreenObject.extend({
 	onResetEvent: function() {
 		// reset the score
 		game.data.score = 0;
-
-                me.audio.playTrack("theme");
-                me.audio.resumeTrack("theme");
-                console.log("play");
+//playing audio tracks
+//                me.audio.playTrack("theme");
+//                me.audio.resumeTrack("theme");
+                me.audio.play("theme", true);
+               //loading level
                 me.levelDirector.loadLevel("GabrielLevel01");
                 
                 
-                
+                //setting player position
                this.resetPlayer(0, 400);
-                
+                //binding keys
                 me.input.bindKey(me.input.KEY.RIGHT, "right");
                  me.input.bindKey(me.input.KEY.LEFT, "left");
                  me.input.bindKey(me.input.KEY.CTRL, "cheat");
@@ -35,7 +36,9 @@ game.PlayScreen = me.ScreenObject.extend({
 	},
         
         resetPlayer: function(x, y) {
+            //pulling settings
              var player = me.pool.pull("mario", x, y, {});
+             //where maario is in the world and how far his z VALUE IS
                 me.game.world.addChild(player, 5);
         }
 });

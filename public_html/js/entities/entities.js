@@ -1,4 +1,4 @@
-// TODO
+//setting up global variables
 var turn;
 var turn2;
 var turn3;
@@ -7,7 +7,7 @@ var moonWalk = "false";
 var player = "mario";
 game.PlayerEntity = me.Entity.extend({
     init: function(x, y, settings) {
-
+//making charecter settings
         this._super(me.Entity, 'init', [x, y, {
                 image: "mario",
                 spritewidth: "128",
@@ -28,19 +28,21 @@ game.PlayerEntity = me.Entity.extend({
 
 
         this.renderable.setCurrentAnimation("idle");
-
+//initializing variables
         fly = "false";
         limit = 500;
         timer = 0;
         this.big = false;
         this.invin = false;
+        //setting velocity
         this.body.setVelocity(5, 20);
+        //making viewport/camera follow charecter
         me.game.viewport.follow(this.pos, me.game.viewport.AXIS.BOTH);
 
 
     },
     update: function(delta) {
-
+//making a timer for the star
         if (timer <= 1) {
             this.invin = false;
             me.audio.pauseTrack("star");
@@ -48,23 +50,27 @@ game.PlayerEntity = me.Entity.extend({
             timer -= .25;
 
         }
-        console.log(this.pos.y);
+        
+        //making so you can die when u fall in lava
         if (this.pos.y > limit) {
             me.state.change(me.state.OVER);
         }
+        //moving right and left
         if (me.input.isKeyPressed("right")) {
-
+//flips animation
             this.flipX(false);
             //sets x position of mario bt adding th velocity set above in setVelocity()
             this.body.vel.x += this.body.accel.x * me.timer.tick;
         }
         else if (me.input.isKeyPressed("left")) {
+            //cheat code stuff
             if (moonWalk == "true") {
 
-
+//flips animation
                 this.flipX(false);
             }
             else if (moonWalk == "false") {
+                //flips animation
                 this.flipX(true);
             }
 
@@ -72,7 +78,7 @@ game.PlayerEntity = me.Entity.extend({
         }
 
 
-
+//cheatcodes
         else if (me.input.isKeyPressed("cheat")) {
             me.input.unbindKey(me.input.KEY.CTRL);
             var code = prompt("whats yor cheat code?");
@@ -99,7 +105,7 @@ game.PlayerEntity = me.Entity.extend({
             this.body.vel.x = 0;
         }
 
-
+//jumping
         if (me.input.isKeyPressed("jump")) {
             
             if (!this.body.jumping && !this.body.falling) {
@@ -113,8 +119,9 @@ game.PlayerEntity = me.Entity.extend({
         }
 
         this.body.update(delta);
+        //checking for collisions with floor
         me.collision.check(this, true, this.collideHandler.bind(this), true);
-
+//setting animations
         if (!this.big && !this.invin) {
 
 
@@ -146,7 +153,7 @@ game.PlayerEntity = me.Entity.extend({
             }
         }
 
-
+//easter egg song
         if (restrict == 0) {
 
         }
@@ -156,10 +163,10 @@ game.PlayerEntity = me.Entity.extend({
         return true;
     },
     collideHandler: function(response) {
-        var ygif = this.pos.y;
+       //finding y difference of player and bad guy
         var ydif = this.pos.y - response.b.pos.y;
-        console.log(ydif);
-
+       
+//what happens if bad guy toches
         if (response.b.type === 'badguy') {
             if (ydif <= -115 || this.invin) {
                 response.b.renderable.setCurrentAnimation("dead");
@@ -167,15 +174,19 @@ game.PlayerEntity = me.Entity.extend({
             } else {
                 me.state.change(me.state.OVER);
             }
+            //what happens when player toches mushroom
         } else if (response.b.type === 'mushroom') {
             this.big = true;
             me.game.world.removeChild(response.b);
-        } else if (response.b.type === 'star') {
+        }
+        //what happens if u toch the star
+        else if (response.b.type === 'star') {
             me.audio.playTrack("star");
             timer = 100;
             this.invin = true;
             me.game.world.removeChild(response.b);
-        } else if (response.b.type === 'lever' && me.input.isKeyPressed("enter")) {
+        }//what happens when you touch the levers 
+        else if (response.b.type === 'lever' && me.input.isKeyPressed("enter")) {
             if (turn == "off") {
                 turn = "flick";
             }
@@ -196,7 +207,7 @@ game.PlayerEntity = me.Entity.extend({
 
     }
 });
-
+//door
 game.LevelTrigger = me.Entity.extend({
     init: function(x, y, settings) {
         this._super(me.Entity, 'init', [x, y, settings]);
@@ -214,9 +225,10 @@ game.LevelTrigger = me.Entity.extend({
 
 
 });
-
+//enemy
 game.BadGuy = me.Entity.extend({
     init: function(x, y, settings) {
+        //settings
         this._super(me.Entity, 'init', [x, y, {
                 image: "slime",
                 spritewidth: 128,
@@ -224,10 +236,11 @@ game.BadGuy = me.Entity.extend({
                 width: 128,
                 height: 128,
                 getShape: function() {
+                    //hitbox
                     return(new me.Rect(0, 0, 20, 100)).toPolygon();
                 }
             }]);
-
+//setting variables
         this.spritewidth = 60;
         var width = settings.width;
         x = this.pos.x;
@@ -241,17 +254,17 @@ game.BadGuy = me.Entity.extend({
         this.walkLeft = true;
         this.alive = true;
         this.type = "badguy";
-
+//setting animations
         this.renderable.addAnimation("run", [4, 5, 6, 7, 8, 9, 10, 11], 80);
         this.renderable.addAnimation("dead", [28, 29, 30], 80);
         this.renderable.setCurrentAnimation("run");
-
+//setting velocity the first number is y and the second one is x
         this.body.setVelocity(4, 6);
     },
     update: function(delta) {
         this.body.update(delta);
         me.collision.check(this, true, this.collideHandler.bind(this), true);
-
+//making him walk back and foward
         if (this.alive) {
             if (this.walkLeft && this.pos.x <= this.startX) {
                 this.walkLeft = false;
@@ -272,7 +285,7 @@ game.BadGuy = me.Entity.extend({
 
     }
 });
-
+//same as enemy except fles
 game.BadFly = me.Entity.extend({
     init: function(x, y, settings) {
         this._super(me.Entity, 'init', [x, y, {
@@ -330,7 +343,7 @@ game.BadFly = me.Entity.extend({
 
     }
 });
-
+//mushroom
 game.Mushroom = me.Entity.extend({
     init: function(x, y, settings) {
         this._super(me.Entity, 'init', [x, y, {
@@ -345,11 +358,12 @@ game.Mushroom = me.Entity.extend({
             }]);
 
         me.collision.check(this);
+        //saying its type for mario collision handler
         this.type = "mushroom";
 
     }
 });
-
+//star
 game.star = me.Entity.extend({
     init: function(x, y, settings) {
         this._super(me.Entity, 'init', [x, y, {
@@ -368,7 +382,7 @@ game.star = me.Entity.extend({
 
     }
 });
-
+//3 levers
 game.lever = me.Entity.extend({
     init: function(x, y, settings) {
         this._super(me.Entity, 'init', [x, y, {
