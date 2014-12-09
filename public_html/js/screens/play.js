@@ -6,7 +6,12 @@ game.PlayScreen = me.ScreenObject.extend({
 		// reset the score
 		game.data.score = 0;
 
+                me.audio.playTrack("theme");
+                me.audio.resumeTrack("theme");
+                console.log("play");
                 me.levelDirector.loadLevel("GabrielLevel01");
+                
+                
                 
                this.resetPlayer(0, 400);
                 
@@ -14,6 +19,7 @@ game.PlayScreen = me.ScreenObject.extend({
                  me.input.bindKey(me.input.KEY.LEFT, "left");
                  me.input.bindKey(me.input.KEY.CTRL, "cheat");
                 me.input.bindKey(me.input.KEY.SPACE, "jump");
+                me.input.bindKey(me.input.KEY.ENTER, "enter");
 		// add our HUD to the game world
 		this.HUD = new game.HUD.Container();
 		me.game.world.addChild(this.HUD);
