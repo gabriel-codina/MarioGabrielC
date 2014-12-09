@@ -9,20 +9,20 @@ game.PlayerEntity = me.Entity.extend({
     init: function(x, y, settings) {
 
         this._super(me.Entity, 'init', [x, y, {
-                image: "myguy",
-                spritewidth: "64",
-                spriteheight: "64",
-                width: 64,
-                height: 64,
+                image: "mario",
+                spritewidth: "128",
+                spriteheight: "128",
+                width: 128,
+                height: 128,
                 getShape: function() {
-                    return(new me.Rect(0, 0, 20, 64)).toPolygon();
+                    return(new me.Rect(0, 0, 20, 128)).toPolygon();
                 }
             }]);
 //makes animations
         this.renderable.addAnimation("bigIdle", [19]);
-        this.renderable.addAnimation("idle", [264]);
+        this.renderable.addAnimation("idle", [3]);
 
-        this.renderable.addAnimation("smallWalk", [265, 266, 268, 269, 270, 271], 80);
+        this.renderable.addAnimation("smallWalk", [8, 9, 10, 11, 12, 13], 80);
         this.renderable.addAnimation("bigWalk", [14, 15, 16, 17, 18, 19], 80);
         this.renderable.addAnimation("invinWalk", [39, 40, 41, 42, 43], 80);
 
@@ -43,6 +43,7 @@ game.PlayerEntity = me.Entity.extend({
 
         if (timer <= 1) {
             this.invin = false;
+            me.audio.pauseTrack("star");
         } else if (this.invin) {
             timer -= .25;
 
@@ -100,12 +101,14 @@ game.PlayerEntity = me.Entity.extend({
 
 
         if (me.input.isKeyPressed("jump")) {
-
-            if (!this.body.jumping) {
+            
+            if (!this.body.jumping && !this.body.falling) {
+                me.audio.play("jump");
                 this.body.vel.y = -this.body.maxVel.y * me.timer.tick;
                 if (fly != "true") {
                     this.body.jumping = true;
                 }
+
             }
         }
 
@@ -144,6 +147,11 @@ game.PlayerEntity = me.Entity.extend({
         }
 
 
+        if (restrict == 0) {
+
+        }
+
+
         this._super(me.Entity, "update", [delta]);
         return true;
     },
@@ -163,20 +171,21 @@ game.PlayerEntity = me.Entity.extend({
             this.big = true;
             me.game.world.removeChild(response.b);
         } else if (response.b.type === 'star') {
+            me.audio.playTrack("star");
             timer = 100;
             this.invin = true;
             me.game.world.removeChild(response.b);
-        } else if (response.b.type === 'lever') {
+        } else if (response.b.type === 'lever' && me.input.isKeyPressed("enter")) {
             if (turn == "off") {
                 turn = "flick";
             }
 
 
-        } else if (response.b.type === 'lever2') {
+        } else if (response.b.type === 'lever2' && me.input.isKeyPressed("enter")) {
             if (turn2 == "off") {
                 turn2 = "flick";
             }
-        } else if (response.b.type === 'lever3') {
+        } else if (response.b.type === 'lever3' && me.input.isKeyPressed("enter")) {
             if (turn3 == "off") {
                 turn3 = "flick";
             }
@@ -273,7 +282,7 @@ game.BadFly = me.Entity.extend({
                 width: 76,
                 height: 36,
                 getShape: function() {
-                    return(new me.Rect(0, 0, 76, 36)).toPolygon();
+                    return(new me.Rect(0, 0, 76, 20)).toPolygon();
                 }
             }]);
 
@@ -434,9 +443,9 @@ game.lever2 = me.Entity.extend({
 
     },
     update: function(delta) {
-    
+
         this.body.update(delta);
-console.log(turn2);
+        console.log(turn2);
         if (turn2 == "flick" && restrict == 2) {
 
             confirm("you need 1 more lever.");
