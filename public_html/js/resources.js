@@ -30,15 +30,19 @@ game.resources = [
         {name: "World_Map", type: "tmx", src: "data/map/World_Map.tmx"},
         {name: "GabrielLevel01", type: "tmx", src: "data/map/GabrielLevel01.tmx"},
         {name: "GabrielLevel03", type: "tmx", src: "data/map/GabrielLevel03.tmx"},
-        {name: "GabrielLevel02", type: "tmx", src: "data/map/GabrielLevel02.tmx"}
+        {name: "GabrielLevel02", type: "tmx", src: "data/map/GabrielLevel02.tmx"},
 
 	/* Background music. 
 	 * @example
 	 * {name: "example_bgm", type: "audio", src: "data/bgm/"},
 	 */	
+        {name: "theme", type: "audio", src: "data/bgm/"},
+        {name: "star", type: "audio", src: "data/bgm/"},
 
 	/* Sound effects. 
 	 * @example
 	 * {name: "example_sfx", type: "audio", src: "data/sfx/"}
 	 */
+        {name: "jump", type: "audio", src: "data/sfx/"},
+        {name: "death", type: "audio", src: "data/sfx/"}
 ];
