@@ -5,6 +5,8 @@ game.resources = [
 	 * {name: "example", type:"image", src: "data/img/example.png"},
 	 */
         //tiles
+        {name: "CODMW2", type:"image", src: "data/img/CODMW2.png"},
+        {name: "item-spritesheet", type:"image", src: "data/img/item-spritesheet.png"},
         {name: "background-tiles", type:"image", src: "data/img/background-tiles.png"},
         {name: "maptiles", type:"image", src: "data/img/maptiles.png"},
         {name: "meta-tiles", type:"image", src: "data/img/meta-tiles2.png"},
@@ -46,6 +48,7 @@ game.resources = [
         //you dont type inthe flile in src cause it takes it from name
         
         {name: "theme", type: "audio", src: "data/bgm/"},
+        {name: "Super_Mario_Bros._DUBSTEP_REMIX", type: "audio", src: "data/bgm/"},
         {name: "star", type: "audio", src: "data/bgm/"},
 
 	/* Sound effects. 

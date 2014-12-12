@@ -24,6 +24,8 @@ game.PlayerEntity = me.Entity.extend({
 
         this.renderable.addAnimation("smallWalk", [8, 9, 10, 11, 12, 13], 80);
         this.renderable.addAnimation("bigWalk", [14, 15, 16, 17, 18, 19], 80);
+        this.renderable.addAnimation("shrink", [0, 1, 2, 3], 80);
+        this.renderable.addAnimation("grow", [4,5,6,7], 80);
         this.renderable.addAnimation("invinWalk", [39, 40, 41, 42, 43], 80);
 
 
@@ -96,6 +98,11 @@ game.PlayerEntity = me.Entity.extend({
                 confirm("You have activated flying.");
                 fly = "true";
             }
+            else if (code == "infinite Star") {
+               
+            timer = 100000;
+            this.invin = true;
+            }
             ;
             this.body.vel.y += this.body.accel.y * me.timer.tick;
             me.input.bindKey(me.input.KEY.CTRL, "cheat");
@@ -108,13 +115,18 @@ game.PlayerEntity = me.Entity.extend({
 //jumping
         if (me.input.isKeyPressed("jump")) {
             
-            if (!this.body.jumping && !this.body.falling) {
+            if (!this.body.jumping && !this.body.falling && fly !== "true") {
                 me.audio.play("jump");
                 this.body.vel.y = -this.body.maxVel.y * me.timer.tick;
                 if (fly != "true") {
                     this.body.jumping = true;
                 }
-
+              }
+              
+              if (!this.body.jumping && fly == "true") {
+               
+                this.body.vel.y = -this.body.maxVel.y * me.timer.tick;
+                
             }
         }
 
@@ -126,7 +138,7 @@ game.PlayerEntity = me.Entity.extend({
 
 
             if (this.body.vel.x !== 0) {
-                if (!this.renderable.isCurrentAnimation("smallWalk")) {
+                if (!this.renderable.isCurrentAnimation("smallWalk") && !this.renderable.isCurrentAnimation("grow") && !this.renderable.isCurrentAnimation("shrink")) {
                     this.renderable.setCurrentAnimation("smallWalk");
                     this.renderable.setAnimationFrame();
                 }
@@ -135,7 +147,7 @@ game.PlayerEntity = me.Entity.extend({
             }
         } else if (!this.invin) {
             if (this.body.vel.x !== 0) {
-                if (!this.renderable.isCurrentAnimation("bigWalk")) {
+                if (!this.renderable.isCurrentAnimation("bigWalk") && !this.renderable.isCurrentAnimation("grow") && !this.renderable.isCurrentAnimation("shrink")) {
                     this.renderable.setCurrentAnimation("bigWalk");
                     this.renderable.setAnimationFrame();
                 }
@@ -155,7 +167,10 @@ game.PlayerEntity = me.Entity.extend({
 
 //easter egg song
         if (restrict == 0) {
-
+            me.audio.pause("theme", true);
+            me.audio.pauseTrack("invin");
+            
+me.audio.play("Super_Mario_Bros._DUBSTEP_REMIX", true);
         }
 
 
@@ -172,10 +187,21 @@ game.PlayerEntity = me.Entity.extend({
                 response.b.renderable.setCurrentAnimation("dead");
                 response.b.alive = false;
             } else {
-                me.state.change(me.state.OVER);
+                if(this.big){
+                    response.b.alive = false;
+                    this.body.vel.y = -this.body.maxVel.y * me.timer.tick;
+                    this.jumping=true;
+                    this.renderable.setCurrentAnimation("shrink", "idle");
+                    this.renderable.setAnimationFrame();
+                    this.big =false;
+                }else{
+                    me.state.change(me.state.OVER);
+                }
+                
             }
             //what happens when player toches mushroom
         } else if (response.b.type === 'mushroom') {
+            this.renderable.setCurrentAnimation("grow", "bigIdle");
             this.big = true;
             me.game.world.removeChild(response.b);
         }
@@ -220,7 +246,7 @@ game.LevelTrigger = me.Entity.extend({
         this.body.setCollisionMask(me.collision.types.NO_OBJECT);
         me.levelDirector.loadLevel(this.level);
         me.state.current().resetPlayer(this.xSpawn, this.ySpawn);
-        limit = 6700;
+        limit = 3400;
     }
 
 
@@ -511,7 +537,7 @@ game.lever3 = me.Entity.extend({
 
         if (turn3 == "flick" && restrict == 1) {
 
-            confirm("you need 1 more lever.");
+            confirm("you have unlocked secret song.");
             secret += 1;
             restrict -= 1;
             this.renderable.setCurrentAnimation("flick");

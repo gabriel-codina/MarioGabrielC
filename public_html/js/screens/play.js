@@ -39,6 +39,6 @@ game.PlayScreen = me.ScreenObject.extend({
             //pulling settings
              var player = me.pool.pull("mario", x, y, {});
              //where maario is in the world and how far his z VALUE IS
-                me.game.world.addChild(player, 5);
+                me.game.world.addChild(player, 6);
         }
 });
